@@ -1,15 +1,14 @@
 // @generated
 /// Generated client implementations.
-pub mod execution_service_client {
+pub mod meta_service_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
-    ///
     #[derive(Debug, Clone)]
-    pub struct ExecutionServiceClient<T> {
+    pub struct MetaServiceClient<T> {
         inner: tonic::client::Grpc<T>,
     }
-    impl ExecutionServiceClient<tonic::transport::Channel> {
+    impl MetaServiceClient<tonic::transport::Channel> {
         /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
@@ -20,7 +19,7 @@ pub mod execution_service_client {
             Ok(Self::new(conn))
         }
     }
-    impl<T> ExecutionServiceClient<T>
+    impl<T> MetaServiceClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
         T::Error: Into<StdError>,
@@ -38,7 +37,7 @@ pub mod execution_service_client {
         pub fn with_interceptor<F>(
             inner: T,
             interceptor: F,
-        ) -> ExecutionServiceClient<InterceptedService<T, F>>
+        ) -> MetaServiceClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
@@ -52,7 +51,7 @@ pub mod execution_service_client {
                 http::Request<tonic::body::BoxBody>,
             >>::Error: Into<StdError> + Send + Sync,
         {
-            ExecutionServiceClient::new(InterceptedService::new(inner, interceptor))
+            MetaServiceClient::new(InterceptedService::new(inner, interceptor))
         }
         /// Compress requests with the given encoding.
         ///
@@ -69,24 +68,47 @@ pub mod execution_service_client {
             self.inner = self.inner.accept_compressed(encoding);
             self
         }
+        pub async fn get_version(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetVersionRequest>,
+        ) -> Result<tonic::Response<super::GetVersionResponse>, tonic::Status> {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/arwain.meta.v1.MetaService/GetVersion",
+            );
+            self.inner.unary(request.into_request(), path, codec).await
+        }
     }
 }
 /// Generated server implementations.
-pub mod execution_service_server {
+pub mod meta_service_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with ExecutionServiceServer.
+    ///Generated trait containing gRPC methods that should be implemented for use with MetaServiceServer.
     #[async_trait]
-    pub trait ExecutionService: Send + Sync + 'static {}
-    ///
+    pub trait MetaService: Send + Sync + 'static {
+        async fn get_version(
+            &self,
+            request: tonic::Request<super::GetVersionRequest>,
+        ) -> Result<tonic::Response<super::GetVersionResponse>, tonic::Status>;
+    }
     #[derive(Debug)]
-    pub struct ExecutionServiceServer<T: ExecutionService> {
+    pub struct MetaServiceServer<T: MetaService> {
         inner: _Inner<T>,
         accept_compression_encodings: EnabledCompressionEncodings,
         send_compression_encodings: EnabledCompressionEncodings,
     }
     struct _Inner<T>(Arc<T>);
-    impl<T: ExecutionService> ExecutionServiceServer<T> {
+    impl<T: MetaService> MetaServiceServer<T> {
         pub fn new(inner: T) -> Self {
             Self::from_arc(Arc::new(inner))
         }
@@ -120,9 +142,9 @@ pub mod execution_service_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for ExecutionServiceServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for MetaServiceServer<T>
     where
-        T: ExecutionService,
+        T: MetaService,
         B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
@@ -138,6 +160,44 @@ pub mod execution_service_server {
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             let inner = self.inner.clone();
             match req.uri().path() {
+                "/arwain.meta.v1.MetaService/GetVersion" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetVersionSvc<T: MetaService>(pub Arc<T>);
+                    impl<
+                        T: MetaService,
+                    > tonic::server::UnaryService<super::GetVersionRequest>
+                    for GetVersionSvc<T> {
+                        type Response = super::GetVersionResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetVersionRequest>,
+                        ) -> Self::Future {
+                            let inner = self.0.clone();
+                            let fut = async move { (*inner).get_version(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = GetVersionSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
                 _ => {
                     Box::pin(async move {
                         Ok(
@@ -153,7 +213,7 @@ pub mod execution_service_server {
             }
         }
     }
-    impl<T: ExecutionService> Clone for ExecutionServiceServer<T> {
+    impl<T: MetaService> Clone for MetaServiceServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
             Self {
@@ -163,7 +223,7 @@ pub mod execution_service_server {
             }
         }
     }
-    impl<T: ExecutionService> Clone for _Inner<T> {
+    impl<T: MetaService> Clone for _Inner<T> {
         fn clone(&self) -> Self {
             Self(self.0.clone())
         }
@@ -173,7 +233,7 @@ pub mod execution_service_server {
             write!(f, "{:?}", self.0)
         }
     }
-    impl<T: ExecutionService> tonic::server::NamedService for ExecutionServiceServer<T> {
-        const NAME: &'static str = "arwain.exec.v1.ExecutionService";
+    impl<T: MetaService> tonic::server::NamedService for MetaServiceServer<T> {
+        const NAME: &'static str = "arwain.meta.v1.MetaService";
     }
 }

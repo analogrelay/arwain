@@ -3,10 +3,18 @@ name = "arwaind"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[[bin]]
+name = "arwaind"
+path = "src/bin/main.rs"
 
 [dependencies]
 env_logger = "0.10.0"
 log = "0.4.17"
 tonic = "0.8.3"
 arwain_proto = { path = "../arwain_proto" }
+tokio = { version = "1.23.0", features = ["macros", "rt-multi-thread", "fs", "signal"] }
+clap = { version = "4.0.32", features = ["derive"] }
+tracing = "0.1.37"
+tracing-subscriber = { version = "0.3.16", features = ["env-filter"] }
+anyhow = "1.0.68"
+tokio-stream = { version = "0.1.11", features = ["net"] }

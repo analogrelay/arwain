@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package arwain.meta.v1;
+
+service MetaService {
+    rpc GetVersion (GetVersionRequest) returns (GetVersionResponse) {}
+}
+
+message GetVersionRequest {
+}
+
+message GetVersionResponse {
+    string version = 1;
+    string platform = 2;
+}
